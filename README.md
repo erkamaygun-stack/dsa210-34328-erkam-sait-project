@@ -1,5 +1,16 @@
-# DSA210 Project — Sunlight, Weather and Consumer Behavior
+# DSA210 Project — Sunshine, Sentiment & Spending
 **Erkam Sait Aygün | 34328**
+
+## 🌐 Live Project Site
+
+> ### **→ [dsa210.erkamaygun.com](https://dsa210.erkamaygun.com)**
+>
+> The full project is available as an interactive website. **You do not need to clone
+> the repository or run anything locally** — just open the link above. The site
+> includes nine pages covering motivation, data sources, methodology, EDA,
+> hypothesis findings, ML results, an interactive variable explorer, and conclusions.
+
+---
 
 ## Project Overview
 This project investigates whether weather conditions (sunshine, temperature,
@@ -102,6 +113,31 @@ pip install -r requirements.txt
 # 2. DSA210_ErkamSaitAygun_34328_EDA_and_Hypothesis_Tests.ipynb  → Part A results
 # 3. 03_ml_modeling.ipynb               → Part B results + figures
 ```
+
+## Interactive Web App
+
+The full project is deployed as an interactive Flask site at:
+
+**→ [https://dsa210.erkamaygun.com](https://dsa210.erkamaygun.com)**
+
+This is the recommended way to explore the project. The site includes nine pages
+(home, motivation, data sources, methodology, EDA, findings, ML results, explorer,
+conclusions), interactive Plotly charts, all generated figures, and a variable
+explorer for the final country-month panel.
+
+### Running the App Locally (optional)
+
+If you prefer to run the app on your own machine instead of using the live link:
+
+```bash
+pip install -r requirements.txt
+python app.py
+# Then open http://127.0.0.1:8501 in your browser
+```
+
+The app loads `data/panel.csv` and `data/model_comparison.csv`, embeds figures
+from `figures/`, and renders all interactive Plotly charts client-side. No
+additional setup is required beyond the repo's own files.
 
 ## Limitations
 - Weather is aggregated at the country level via 5-city population-weighted means;
