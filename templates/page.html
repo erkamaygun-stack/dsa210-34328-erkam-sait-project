@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} · DSA210</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="topnav">
+    <div class="nav-inner">
+        <a href="{{ url_for('home') }}" class="brand">
+            <i class="fa-solid fa-cloud-sun"></i>
+            <span>DSA210 · Weather &amp; Consumer</span>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <ul class="nav-links">
+            {% for slug, name, icon in nav_items %}
+            <li>
+                <a href="{{ url_for(slug) }}" class="{% if active == slug %}active{% endif %}">
+                    <i class="fa-solid {{ icon }}"></i>
+                    <span>{{ name }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
+
+<header class="hero {% if hero.compact %}compact{% endif %} {% if hero.home %}home{% endif %}">
+    <div class="hero-inner">
+        {% if hero.icon and not hero.home %}
+        <div class="hero-icon"><i class="fa-solid {{ hero.icon }}"></i></div>
+        {% endif %}
+        <h1>{{ hero.title }}</h1>
+        {% if hero.subtitle %}<p class="hero-subtitle">{{ hero.subtitle }}</p>{% endif %}
+    </div>
+</header>
+
+<main class="content">
+{% for section in sections %}
+
+    {% if section.type == 'home_overview' %}
+    <section class="block">
+        <div class="stat-grid">
+            {% for value, label, desc, icon in section.stats %}
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <div class="stat-value">{{ value }}</div>
+                <div class="stat-label">{{ label }}</div>
+                <div class="stat-desc">{{ desc }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="chart-card">
+            {{ section.chart | safe }}
+        </div>
+    </section>
+
+    {% elif section.type == 'research_cards' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="card-grid card-grid-3">
+            {% for title, body, slug, icon in section.cards %}
+            <a href="{{ url_for(slug) }}" class="link-card">
+                <div class="link-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <h3>{{ title }}</h3>
+                <p>{{ body }}</p>
+                <span class="link-arrow">Explore <i class="fa-solid fa-arrow-right"></i></span>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'text_card' %}
+    <section class="block">
+        <div class="text-card">
+            {% if section.icon %}<div class="text-icon"><i class="fa-solid {{ section.icon }}"></i></div>{% endif %}
+            {% if section.title %}<h2>{{ section.title }}</h2>{% endif %}
+            <p>{{ section.body }}</p>
+        </div>
+    </section>
+
+    {% elif section.type == 'three_cards' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="card-grid card-grid-3">
+            {% for title, body, icon in section.cards %}
+            <div class="info-card">
+                <div class="info-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <h3>{{ title }}</h3>
+                <p>{{ body }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'source_grid' %}
+    <section class="block">
+        <div class="card-grid card-grid-2">
+            {% for title, body, badge, icon in section.sources %}
+            <div class="source-card">
+                <div class="source-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <div class="source-body">
+                    <h3>{{ title }}</h3>
+                    <p>{{ body }}</p>
+                    <span class="badge">{{ badge }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'pipeline' %}
+    <section class="block">
+        <h2 class="block-title">Pipeline Overview</h2>
+        <div class="pipeline">
+            <div class="pipeline-step"><i class="fa-solid fa-cloud-arrow-down"></i><span>Fetch</span></div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step"><i class="fa-solid fa-object-group"></i><span>Merge</span></div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step"><i class="fa-solid fa-broom"></i><span>Clean</span></div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step"><i class="fa-solid fa-flask"></i><span>Test</span></div>
+            <div class="pipeline-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="pipeline-step"><i class="fa-solid fa-robot"></i><span>Model</span></div>
+        </div>
+    </section>
+
+    {% elif section.type == 'table' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="table-wrap">
+            {{ section.html | safe }}
+        </div>
+    </section>
+
+    {% elif section.type == 'timeline' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <ol class="timeline">
+            {% for step, body in section['items'] %}
+            <li>
+                <div class="timeline-marker">{{ loop.index }}</div>
+                <div class="timeline-content">
+                    <h3>{{ step }}</h3>
+                    <p>{{ body }}</p>
+                </div>
+            </li>
+            {% endfor %}
+        </ol>
+    </section>
+
+    {% elif section.type == 'insight' %}
+    <section class="block">
+        <div class="insight insight-{{ section.tone | default('info') }}">
+            <div class="insight-icon">
+                <i class="fa-solid {% if section.tone == 'warning' %}fa-triangle-exclamation{% elif section.tone == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"></i>
+            </div>
+            <div>
+                {% if section.title %}<h3>{{ section.title }}</h3>{% endif %}
+                <p>{{ section.body }}</p>
+            </div>
+        </div>
+    </section>
+
+    {% elif section.type == 'feature_cards' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="card-grid card-grid-2">
+            {% for title, body, icon in section.cards %}
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <div>
+                    <h3>{{ title }}</h3>
+                    <p>{{ body }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'image_gallery' %}
+    {% if section.images and section.images|length > 0 %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="image-grid">
+            {% for path, caption in section.images %}
+            <figure class="image-card">
+                <img src="{{ url_for('project_figures', filename=path) }}" alt="{{ caption }}" loading="lazy">
+                <figcaption>{{ caption }}</figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% elif section.type == 'figure_grid' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="figure-grid">
+            {% for title, html, caption in section.figures %}
+            <div class="figure-card">
+                <h3>{{ title }}</h3>
+                <div class="figure-chart">{{ html | safe }}</div>
+                {% if caption %}<p class="figure-caption">{{ caption }}</p>{% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'single_figure' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="figure-card single">
+            <div class="figure-chart">{{ section.chart | safe }}</div>
+            {% if section.insight %}<p class="figure-caption">{{ section.insight }}</p>{% endif %}
+        </div>
+    </section>
+
+    {% elif section.type == 'hypothesis_cards' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        {% for tag, hypothesis, verdict, reason, tone, body in section['items'] %}
+        <div class="hypothesis-card hypothesis-{{ tone }}">
+            <div class="hypothesis-header">
+                <span class="hypothesis-tag">{{ tag }}</span>
+                <h3>{{ hypothesis }}</h3>
+                <span class="hypothesis-verdict">{{ verdict }}</span>
+            </div>
+            <p class="hypothesis-reason">{{ reason }}</p>
+            <div class="hypothesis-body">{{ body | safe }}</div>
+        </div>
+        {% endfor %}
+    </section>
+
+    {% elif section.type == 'ml_metrics' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="metric-grid">
+            {% for name, value, desc, icon in section.metrics %}
+            <div class="metric-card">
+                <div class="metric-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <div class="metric-value">{{ value }}</div>
+                <div class="metric-label">{{ name }}</div>
+                <div class="metric-desc">{{ desc }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'explorer' %}
+    <section class="block">
+        <form class="explorer-form" method="get" action="{{ url_for('explorer') }}">
+            <div class="form-row">
+                <label>
+                    <span>X-axis</span>
+                    <select name="x">
+                        {% for opt in section.allowed_x %}
+                        <option value="{{ opt }}" {% if opt == section.x_var %}selected{% endif %}>{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label>
+                    <span>Y-axis</span>
+                    <select name="y">
+                        {% for opt in section.allowed_y %}
+                        <option value="{{ opt }}" {% if opt == section.y_var %}selected{% endif %}>{{ opt }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            <fieldset class="form-row">
+                <legend>Countries</legend>
+                <div class="checkbox-row">
+                    {% for c in section.countries %}
+                    <label class="checkbox-pill">
+                        <input type="checkbox" name="country" value="{{ c }}" {% if c in section.selected %}checked{% endif %}>
+                        <span>{{ c }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <button type="submit" class="primary-btn">
+                <i class="fa-solid fa-rotate"></i> Update Chart
+            </button>
+        </form>
+        <div class="chart-card">{{ section.chart | safe }}</div>
+    </section>
+
+    {% elif section.type == 'conclusion_cards' %}
+    <section class="block">
+        {% if section.title %}<h2 class="block-title">{{ section.title }}</h2>{% endif %}
+        <div class="card-grid card-grid-2">
+            {% for title, body, icon in section['items'] %}
+            <div class="conclusion-card">
+                <div class="conclusion-icon"><i class="fa-solid {{ icon }}"></i></div>
+                <div>
+                    <h3>{{ title }}</h3>
+                    <p>{{ body }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    {% elif section.type == 'final_cta' %}
+    <section class="block">
+        <div class="final-cta">
+            <i class="fa-solid fa-flag-checkered"></i>
+            <h2>{{ section.title }}</h2>
+            <p>{{ section.body }}</p>
+            <a class="primary-btn" href="{{ repo_url }}" target="_blank">
+                <i class="fa-brands fa-github"></i> View on GitHub
+            </a>
+        </div>
+    </section>
+
+    {% endif %}
+{% endfor %}
+</main>
+
+<footer class="footer">
+    <div class="footer-inner">
+        <p><strong>DSA210 Project</strong> · Erkam Sait Aygün · 34328</p>
+        <a href="{{ repo_url }}" target="_blank">
+            <i class="fa-brands fa-github"></i> GitHub Repository
+        </a>
+    </div>
+</footer>
+
+</body>
+</html>
